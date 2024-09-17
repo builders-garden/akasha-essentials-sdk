@@ -6,8 +6,7 @@
     "build-types": "tsc --project ./tsconfig.types.json",
     "build-cjs": "tsc --project ./tsconfig.cjs.json",
     "build-esm": "tsc --project ./tsconfig.esm.json",
-    "build": "npx del-cli dist && npm run build-cjs && npm run build-esm && npm run build-types && echo 'Successfully built'",
-    "rollup": "rollup -c"
+    "build": "npx del-cli dist && npm run build-cjs && npm run build-esm && npm run build-types && echo 'Successfully built'"
   },
   "keywords": [
     "akasha",
@@ -21,9 +20,6 @@
     "@akashaorg/typings": "file:../akasha-core/libs/typings",
     "@akashaorg/ui-awf-hooks": "file:../akasha-core/libs/hooks",
     "@apollo/client": "^3.11.8",
-    "@rollup/plugin-commonjs": "^26.0.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-typescript": "^11.1.6",
     "@types/react": "^18.3.5",
     "@types/systemjs": "6.13.5",
     "immer": "9.0.21",
