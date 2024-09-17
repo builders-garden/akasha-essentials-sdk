@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   BlockInstanceMethods,
-  ContentBlockConfig,
   ContentBlockModes,
   ContentBlockRootProps,
 } from "@akashaorg/typings/lib/ui";
@@ -51,7 +50,7 @@ export const useBlocksPublishing = (props: UseBlocksPublishingProps) => {
     (ContentBlockRootProps["blockInfo"] & {
       appName: string;
       blockRef: React.RefObject<BlockInstanceMethods>;
-      key: `${string}-${string}-${string}-${string}-${string}`;
+      key: number;
       status?: "success" | "pending" | "error";
       response?: { blockID: string; error?: string };
       disablePublish?: boolean;
@@ -108,12 +107,50 @@ export const useBlocksPublishing = (props: UseBlocksPublishingProps) => {
           },
         },
       })
-        .then((resp: any) => {
-          setBlocksInUse([]);
-          setIsPublishing(false);
-          onComplete?.(resp.data.createAkashaBeam);
-        })
-        .catch((err: any) => {
+        .then(
+          (resp: {
+            data: {
+              createAkashaBeam:
+                | {
+                    clientMutationId?: string | null;
+                    document: {
+                      id: string;
+                      reflectionsCount: number;
+                      active: boolean;
+                      version: any;
+                      createdAt: any;
+                      nsfw?: boolean | null;
+                      embeddedStream?: {
+                        label: string;
+                        embeddedID: any;
+                      } | null;
+                      author: { id: string; isViewer: boolean };
+                      content: Array<{ blockID: any; order: number }>;
+                      tags?: Array<{
+                        labelType: string;
+                        value: string;
+                      } | null> | null;
+                      reflections: {
+                        edges?: Array<{ cursor: string } | null> | null;
+                        pageInfo: {
+                          hasNextPage: boolean;
+                          hasPreviousPage: boolean;
+                          startCursor?: string | null;
+                          endCursor?: string | null;
+                        };
+                      };
+                    };
+                  }
+                | null
+                | undefined;
+            };
+          }) => {
+            setBlocksInUse([]);
+            setIsPublishing(false);
+            onComplete?.(resp.data.createAkashaBeam);
+          }
+        )
+        .catch((err: { message: any }) => {
           setErrors((prev) => [
             ...prev,
             new Error(`failed to create beam: ${err.message}`),
@@ -278,10 +315,10 @@ export const useBlocksPublishing = (props: UseBlocksPublishingProps) => {
     }
   };
 
-  const updateBlockDisablePublishState = (value: boolean, index: number) => {
+  const updateBlockDisablePublishState = (value: boolean, key: number) => {
     setBlocksInUse((prev) => {
       const next = prev.map((elem) => {
-        if (elem.order === index) {
+        if (elem.key === key) {
           return { ...elem, disablePublish: value };
         } else {
           return elem;
